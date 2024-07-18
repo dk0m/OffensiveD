@@ -57,7 +57,7 @@ class ApiHook {
 }
 
 int msgBoxAHook(HWND, LPCSTR, LPCSTR, UINT) {
-    return MessageBoxW(NULL, "Nigga", "Nigga", 0);
+    return MessageBoxW(NULL, "Hooked!", "Hooked!", 0);
 }
 
 void main() {
