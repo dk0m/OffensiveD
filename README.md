@@ -4,7 +4,7 @@ Utilizing DLang For Offensive Operations.
 
 ## Why D?
 
-Due to **DLang** being rarely used in malware, This makes it very good for malware developers to utilize it in their offensive operations.
+Due to **DLang** being rarely used in malware, This makes it very good for malware developers to utilize it in their offensive operations, Combining that with the fact that D can call C code and its decent FFI, We get a powerful language for malware.
 
 
 ## Examples Of Malware In D
