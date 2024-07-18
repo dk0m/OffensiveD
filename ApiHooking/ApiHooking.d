@@ -66,8 +66,8 @@ void main() {
 
     MessageBoxA(
         NULL,
-        "yo",
-        "yo",
+        "This Will Be Hooked!",
+        ":(",
         0
     );
 
@@ -75,8 +75,8 @@ void main() {
 
     MessageBoxA(
         NULL,
-        "yo",
-        "yo",
+        "This Will Run Fine!",
+        ":)",
         0
     );
 
