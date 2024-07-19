@@ -1,4 +1,4 @@
-module HellsGate.HellsGate;
+module HadesGate.HellsGate;
 
 import core.sys.windows.windows;
 import core.stdcpp.vector;
@@ -11,8 +11,8 @@ T rvaToVa(T) (DWORD_PTR peBase, DWORD offset) {
     return cast(T)(peBase + offset);
 }
 
-PVOID getImage(string targetMod) {
-    return cast(PVOID)GetModuleHandleA(cast(LPCSTR)targetMod);
+PVOID getImageL(string targetMod) {
+    return cast(PVOID)LoadLibraryA(cast(LPCSTR)targetMod);
 }
 
 string lpcstrToStr(LPCSTR lpString) {
@@ -36,52 +36,41 @@ string lpcstrToStr(LPCSTR lpString) {
     return finalStr;
 }
 
+
+
 WORD getFunctionSsn(PVOID fnAddress) {
 
     auto pAddress = cast(PBYTE)fnAddress;
 
     WORD cw = 0;
-
     while (TRUE) {
 
-        if (*cast(PBYTE)(pAddress + cw) == 0x0f && *cast(PBYTE)(pAddress + cw + 1) == 0x05) {
+        // check for jmp, in this case we are done.
+        if (*cast(PBYTE)(pAddress + cw) == 0xE9) {
             return 0;
         }
 
-        if (*cast(PBYTE)(pAddress + cw) == 0xc3) {
-            return 0;
-        }
-        /* 
-        System Call Stub:
+        // check for mov eax, XX_XX (XX_XX is SSN)
 
-         mov r10, rcx
-         mov eax, <SSN> 
+        if (*cast(PBYTE)(pAddress + cw) == 0xB8) {
 
-         */
-        if (*cast(PBYTE)(pAddress + cw) == 0x4c && *cast(PBYTE)(pAddress + cw + 1) == 0x8b && *cast(PBYTE)(pAddress + cw + 2) == 0xd1 && *cast(PBYTE)(pAddress + cw + 6) == 0x00 && *cast(PBYTE)(pAddress + cw + 7) == 0x00) {
-
-            BYTE high = *cast(PBYTE)(pAddress + 5 + cw);
-            BYTE low = *cast(PBYTE)(pAddress + 4 + cw);
-
-            WORD ssn = (high << 8) | low;
+            WORD ssn = *cast(PWORD)(pAddress + cw + 1); // XX_XX (the ssn)
             return ssn;
-
         }
+
 
         cw++;
     }
 
 }
 
-
 struct SystemCall {
     string Name;
     WORD Ssn;
 }
-
 vector!SystemCall getSystemCalls() {
     auto systemCalls = vector!SystemCall(Default);
-    auto peImage = getImage("NTDLL");
+    auto peImage = getImageL("ntoskrnl.exe");
     auto peBase = cast(DWORD_PTR)peImage;
 
     PIMAGE_DOS_HEADER dosHdr = cast(PIMAGE_DOS_HEADER)(peBase);
@@ -104,7 +93,7 @@ vector!SystemCall getSystemCalls() {
 
         string printableName = lpcstrToStr(fnName);
 
-        if (!strncmp(fnName, "Nt", 2)) {
+        if (!strncmp(fnName, "Zw", 2)) {
             
             systemCalls.push_back(
                 * new SystemCall(printableName, getFunctionSsn(fnAddr))
@@ -114,8 +103,8 @@ vector!SystemCall getSystemCalls() {
     }
 
     return systemCalls;
-}
 
+}
 void main() {
 
     auto sysCalls = getSystemCalls();
