@@ -7,6 +7,8 @@ Utilizing DLang For Offensive Operations.
 Due to **DLang** being rarely used in malware, This makes it very good for malware developers to utilize it in their offensive operations, Combining that with the fact that D can call C code and its decent FFI, We get a powerful language for malware.
 
 
-## Examples Of Malware In D
+## More Offensive DLang Projects
 
-This repository won't contain full pieces of malware code in D, It will only contain pieces of code that help with malware development, Moreover, This won't cover alot of advanced topics and will most likely not be continued in the near future, I have provided enough code using which you can use to make more advanced pieces of malware, I have released other malware related repositories that use D as well, Hope you enjoy this small repository and learn one thing or two.
+- [Tampering Syscalls](https://github.com/dk0m/TamperingSyscallsD)
+- [Hardware Breakpoints](https://github.com/dk0m/HwBpD)
+- [Get System Call Stub](https://github.com/dk0m/GetSyscallStubD)
